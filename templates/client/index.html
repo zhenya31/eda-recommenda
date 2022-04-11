@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Еда Рекоменда – сервис для рекомендации кафе и ресторанов похожих на ваши любимые места</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .container {
+            max-width: 740px;
+            background: #fff;
+            background-clip: border-box;
+
+        }
+        #app {
+            position: relative;
+            padding: 0 12px;
+        }
+        .my-card {
+            box-shadow: 0 0 20px rgb(0 0 0 / 7%);
+        }
+
+        .header {
+            background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://www.bombaytadkamd.com/images/bg/1.jpg');
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            width: 100%;
+            color: #ffffff;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .search-preview-card {
+            position: absolute;
+            top: -16px;
+            left: 0;
+            right: 0;
+            background: #fff;
+            box-sizing: revert;
+            color: #000;
+            border-radius: 10px;
+            padding: 2px 24px;
+            box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%);
+        }
+            .search-preview-item {
+                margin: 14px 0;
+            }
+                .search-preview-item .place-name {
+                    font-weight: 700;
+                    font-size: 1em;
+                    cursor: pointer;
+                }
+                .search-preview-item .place-name:hover{
+                    color: #f43626;
+                }
+                .search-preview-item .place-address {
+                    font-size: 0.8em;
+                    color: #555;
+                    line-height: 0.9em;
+                }
+
+        #recommend-btn {
+            box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%);
+            background-color: #f65407;
+            border-radius: 16px;
+            color: #ffffff;
+            text-align: center;
+            padding: 16px 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            {#margin: 0 auto;#}
+            {#max-width: 420px;#}
+        }
+        #recommend-btn:hover {background-color: #ed4f00;}
+        h3 {
+            margin: 28px 0px 20px;
+            font-weight: 600;
+            font-size: 1.4em;
+            color: #444;
+            text-align: center;
+
+        }
+        .place-card {
+            padding: 14px 30px 18px;
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+            .place-card .place-name {
+                font-weight: 700;
+                font-size: 1.2em;
+                cursor: pointer;
+            }
+            .place-card .place-name:hover {
+                color: #f43626;
+            }
+            .place-card .place-address {
+                font-size: 0.88em;
+                color: #555;
+                line-height: 1em;
+            }
+
+        .delete-btn {
+            border-radius: 10px; border: 1px solid #f43626; padding: 10px 12px; color: #f43626;
+            font-size: 1em;
+            line-height: 1em;
+            height: 1em;
+            box-sizing: content-box;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            border: 1px solid #f45446; padding: 10px 12px; color: #f45446;
+        }
+
+        .search-preview-card .delete-btn{
+            font-size: 0.76em;
+            line-height: 0.76em;
+            height: 0.76em;
+            box-sizing: content-box;
+            width: 74px;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .add-btn {
+            border-radius: 10px; background: #f65407; padding: 11px 0; color: #fff;
+            font-size: 0.76em;
+            line-height: 0.7em;
+            height: 0.7em;
+            box-sizing: content-box;
+            cursor: pointer;
+            width: 76px;
+            text-align: center;
+        }
+        .add-btn:hover {
+            background: #ed4f00;
+        }
+
+
+        .input-card {
+            display: flex;
+            padding: 0.4rem 0.5rem;
+            border-radius: 10px;
+            background-color: #fff;
+            align-items: center;
+            justify-content: left;
+
+            box-shadow: 0 0 20px rgb(0 0 0 / 7%);
+        }
+        .input-card-form {
+            flex: 1 0 0%;
+            border: 0;
+        }
+        .input-card .form-control {
+            border-width: 0;
+        }
+        .input-card .form-control:focus {
+            outline: 0;
+            border-width: 0;
+            box-shadow: none;
+        }
+        .input-card .btn {
+            flex: 0 0 auto;
+            background-color: #f4f4f4;
+            color: #444;
+            font-size: 1em;
+            border-radius: 10px;
+        }
+        .input-card .btn:hover {
+            background-color: #ededed;
+        }
+
+        #place-page {
+            background: #fff;
+            position: relative;
+            top: -48px;
+            border-radius:  20px;
+            z-index: 10;
+        }
+            .place-page-info {
+                border-radius: 16px;
+                color: #000;
+                background: #f4f4f4;
+                overflow: hidden;
+                padding: 8px 5% 18px;
+                margin-top: 18px;
+            }
+
+            #place-page h4 {
+                font-size: 1.3em;
+                margin: 16px 0 4px;
+            }
+            #place-page a {
+                word-wrap: normal;
+                overflow: hidden;
+            }
+
+
+        .close-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #f3f3f3;
+            border-radius: 24px;
+            padding: 10px;
+            cursor: pointer;
+        }
+            .close-btn:hover {
+                background: #eaeaea;
+            }
+
+        .back-to-main-btn {
+            padding: 12px 5px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0 auto 10px;
+            width: 320px;
+            font-size: 0.9em;
+            font-weight: 600;
+            background: #f65407;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .back-to-main-btn:hover {
+            background: #ed4f00;
+        }
+
+
+        .place-tag { font-size: 0.72em; padding: 5px 10px; color: #fff; border-radius: 16px; font-weight: 600; margin: 0 3px; }
+            #place-page .place-tag { font-size: 0.8em; padding: 6px 12px; }
+        .place-tag-good { background: #4DB6AC }
+        .place-tag-best { background: #66BB6A }
+        .place-tag-popular { background: #29B6F6 }
+
+
+    </style>
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="text-center" style="font-size: 1.2em; font-weight: 600; color: #444; margin: 16px 0 12px">Москва</div>
+<div id="app" class="mb-4">
+    <div @click="hideSearchResults">
+        <div class="container">
+            <div class="header my-card p-4">
+                <h1 class="text-center fw-bolder" style="color: #f65407">Еда-Рекоменда</h1>
+                <div class="text-center mb-5" style="font-size: 1.3em; font-weight: 500; padding: 0 5%;">Сервис для рекомендации кафе и ресторанов,<br> похожих на ваши любимые места</div>
+                <div v-if="typeof placeOnPlacePage.fields == 'undefined' && !appState.showRecommendations">
+                    <div class="text-center" style="font-size: 1.05em; font-weight: 400;">Укажите несколько мест, которые вам нравятся, а мы подберем похожие на них</div>
+                    <div class="input-card mt-2" id="search-input">
+                        <svg style="margin: 2px 2px 4px 12px;" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="26" height="26" viewBox="0 0 172 172"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#6c757d"><path d="M72.24,10.32c-32.33062,0 -58.48,26.14938 -58.48,58.48c0,32.33063 26.14938,58.48 58.48,58.48c11.54281,0 22.22563,-3.38625 31.2825,-9.1375l42.2475,42.2475l14.62,-14.62l-41.71,-41.6025c7.49813,-9.83625 12.04,-22.02406 12.04,-35.3675c0,-32.33062 -26.14937,-58.48 -58.48,-58.48zM72.24,24.08c24.76531,0 44.72,19.95469 44.72,44.72c0,24.76531 -19.95469,44.72 -44.72,44.72c-24.76531,0 -44.72,-19.95469 -44.72,-44.72c0,-24.76531 19.95469,-44.72 44.72,-44.72z"></path></g></g></svg>
+                        <div class="input-card-form">
+                          <input type="text" class="form-control form-control-lg" placeholder="Введите название любимого кафе или ресторана"
+                                 v-model="searchQuery"
+                                 @focus="appState.showSearchResults1 = true; appState.showSearchResults2 = true"
+                                 @blur="appState.showSearchResults2 = false">
+                        </div>
+                         <button type="button" class="btn btn-lg" v-if="searchResults.length!=0" @click="searchQuery = ''">Отменить</button>
+                    </div>
+                </div>
+
+                <div class="back-to-main-btn" v-if="appState.showRecommendations" @click="appState.showRecommendations = false">
+                    Указать другие любимые рестораны
+                </div>
+
+            </div>
+
+            <div id="search-preview" class="px-4" style="position: relative" v-if='showSearchResults'>
+                <div class="search-preview-card mx-4">
+                    <div class="search-preview-item d-flex" style="justify-content: space-between; align-items: center;"
+                         v-for="place in searchResults">
+                        <div>
+                            <div class="place-name" @click="showPlacePage(place)">[[ place.fields.name ]]</div>
+                            <div class="place-address">[[ place.fields.address ]]</div>
+                        </div>
+                        <div @click="addToFavourites(place.pk)" class="add-btn" v-if="favouritesPk.indexOf(place.pk) == -1">Добавить</div>
+                        <div @click="deleteFromFavourites(place.pk)" class="delete-btn" v-else>Удалить</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container position-fixed" style="bottom: 12px; margin: 0 -12px; background: none;" v-if="favourites.length > 0 && !showSearchResults && typeof placeOnPlacePage.fields == 'undefined' && !appState.showRecommendations">
+                <div id="recommend-btn" @click="getRecommendations">Подобрать похожие рестораны</div>
+            </div>
+
+            <div id="favourites" style="padding-bottom: 64px" v-if="typeof placeOnPlacePage.fields == 'undefined' && !appState.showRecommendations">
+                <h3 v-if="favourites.length == 0">Тут будет список ваши любмых мест</h3>
+                <h3 v-if="favourites.length > 0">Ваши любимые места</h3>
+                <div class="my-card place-card d-flex" style="justify-content: space-between; align-items: center;"
+                     v-for="place in favourites">
+                    <div>
+                        <div class="place-name" @click="showPlacePage(place)">[[ place.fields.name ]]</div>
+                        <div class="place-address">[[ place.fields.address ]]</div>
+                    </div>
+                    <div @click="deleteFromFavourites(place.pk)" class="delete-btn">Удалить</div>
+                </div>
+            </div>
+
+            <div id="recommendations" v-if="appState.showRecommendations">
+                    <h3 v-if="recommendations.length > 0" >Места похожие на ваши любимые</h3>
+                    <div class="my-card place-card d-flex" style="justify-content: space-between; align-items: center;"
+                         v-for="place in recommendations">
+                        <div>
+                            <div class="place-name" @click="showPlacePage(place)">[[ place.fields.name ]]</div>
+                            <div class="place-address">[[ place.fields.address ]]</div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="place-tag place-tag-popular" v-if="place.fields.reviews_number >= 150">Популярное место</div>
+                            <div class="place-tag place-tag-good" v-if="place.fields.rating >= 4 && place.fields.rating < 4.5">Хорошие отзывы</div>
+                            <div class="place-tag place-tag-best" v-if="place.fields.rating >= 4.5">Отличные отзывы</div>
+                        </div>
+                    </div>
+                <h3 v-if="appState.recommendationsInProgress">Ищем похожие рестораны...</h3>
+                <h3 v-if="recommendations.length === 0 && !appState.recommendationsInProgress" >Мы не смогли найти места похожие на ваши любимые:(<br>Кажется, у вас уникальный вкус!</h3>
+
+            </div>
+
+            <div id="place-page" class="my-card" v-if="typeof placeOnPlacePage.fields != 'undefined'">
+                <div class="close-btn" @click="closePlacePage">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="28" height="28" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#999999"><path d="M31.4975,21.715l-9.7825,9.7825l54.5025,54.5025l-54.825,54.9325l9.675,9.675l54.9325,-54.825l54.825,54.825l9.7825,-9.7825l-54.825,-54.825l54.5025,-54.5025l-9.7825,-9.7825l-54.5025,54.5025z"></path></g></g></svg>
+                </div>
+                <div class="p-4">
+                    <h2 class="text-center" style="color: #000; font-weight: 600; margin-bottom: 2px;">[[ placeOnPlacePage.fields.name ]]</h2>
+                    <div class="text-center" style="font-size: 1.05em; font-weight: 500; padding: 0 5%;">[[ placeOnPlacePage.fields.subcategory ]]</div>
+                    <div class="d-flex" style="justify-content: center; margin-top: 12px">
+                        <div class="place-tag place-tag-popular" v-if="placeOnPlacePage.fields.reviews_number >= 150">Популярное место</div>
+                        <div class="place-tag place-tag-good" v-if="placeOnPlacePage.fields.rating >= 4 && placeOnPlacePage.fields.rating < 4.5">Хорошие отзывы</div>
+                        <div class="place-tag place-tag-best" v-if="placeOnPlacePage.fields.rating >= 4.5">Отличные отзывы</div>
+                    </div>
+                    <div class="place-page-info">
+                        <h4>Адрес</h4>
+                        <div>[[ placeOnPlacePage.fields.address ]]</div>
+
+                        <h4>Контакты</h4>
+                        <div class="mb-1">
+                            <div class="mb-1" v-if="placeOnPlacePage.sites.length > 1">Сайты:</div>
+                            <div class="mb-1 overflow-hidden" v-for="site in placeOnPlacePage.sites">
+                                <a :href="site.url" target="_top">[[ site.anchor ]]</a>
+                            </div>
+                        </div>
+                        <div class="mb-1"  v-if="placeOnPlacePage.fields.phone_numbers">[[ placeOnPlacePage.fields.phone_numbers ]]</div>
+                        <div class="mb-1" v-if="placeOnPlacePage.fields.vk">VK: <a class="overflow-hidden" :href="placeOnPlacePage.fields.vk" target="_top">[[ placeOnPlacePage.fields.vk ]]</a></div>
+                    </div>
+                        <h4 style="padding-left: 5%; margin-top: 30px" v-if="placePageBranches.length > 0">Филиалы</h4>
+                        <div class="my-card place-card d-flex" style="justify-content: space-between; align-items: center;"
+                         v-for="place in placePageBranches">
+                            <div>
+                                <div class="place-name" @click="showPlacePage(place)">[[ place.fields.name ]]</div>
+                                <div class="place-address">[[ place.fields.address ]]</div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    <script>
+        //const axios = require('axios').default;
+        const app = Vue.createApp({
+            delimiters: ['[[', ']]'],
+            data() {
+            return {
+                searchQuery: '',
+                appState: {
+                    showSearchResults1: false,
+                    showSearchResults2: false,
+                    showRecommendations: false,
+                    recommendationsInProgress: false,
+                },
+                backState: {},
+
+                searchResults: [],
+                lastSearchIteration: -1,
+
+                placeOnPlacePage: {},
+                placePageBranches: [],
+
+                favourites: [],
+                recommendations: [],
+            };
+            },
+            beforeMount() {
+                axios.get('http://127.0.0.1:8000/api/get-favourites')
+                  .then(function (response) {
+                      if (response.status === 200){
+                          vm.favourites = response.data.reverse();
+                      }
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  });
+            },
+            methods: {
+                showPlacePage(place) {
+                    for (let key in this.appState) {
+                        if (!this.placeOnPlacePage.pk)
+                            vm.backState[key] = vm.appState[key];
+                        vm.appState[key] = false;
+                    }
+                    this.placeOnPlacePage = place;
+
+                    vm.placePageBranches = [];
+
+                    axios.get('http://127.0.0.1:8000/api/get-branches?pk=' + place.pk)
+                          .then(function (response) {
+                              if (response.status === 200){
+                                  vm.placePageBranches = response.data;
+                              }
+                          })
+                          .catch(function (error) {
+                              console.log(error);
+                          });
+
+                    if (typeof this.placeOnPlacePage.fields != 'undefined'){
+                      let sites = this.placeOnPlacePage.fields.site.split(", ");
+                      this.placeOnPlacePage.sites = [];
+                      for (let site of sites){
+                          let siteAnchor = site.replaceAll('http://', '');
+                          siteAnchor = siteAnchor.replaceAll('https://', '');
+                          if (siteAnchor.indexOf('/') === siteAnchor.length - 1) {
+                            siteAnchor = siteAnchor.replaceAll('/', '');
+                          }
+                          this.placeOnPlacePage.sites.push({url: site, anchor: siteAnchor });
+                      }
+                    }
+                },
+                deleteFromFavourites(pk) {
+                     let idx = vm.favouritesPk.indexOf(pk)
+                     axios.get('http://127.0.0.1:8000/api/delete-from-favourites?pk=' + pk)
+                          .then(function (response) {
+                              if (response.status === 200 && response.data.status === 'ok'){
+                                  vm.favourites.splice(idx, 1);
+                              }
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                          });
+                },
+                addToFavourites(pk) {
+                     axios.get('http://127.0.0.1:8000/api/add-to-favourites?pk='+pk)
+                          .then(function (response) {
+                              if (response.status === 200 && response.data.status !== 'error'){
+                                  vm.favourites.unshift(response.data);
+                              }
+                          })
+                          .catch(function (error) {
+                            console.log(error);
+                          });
+                },
+                hideSearchResults: function(event) {
+                    if (this.showSearchResults){
+                        let el1 = document.getElementById('search-preview');
+                        let el2 = document.getElementById('search-input');
+
+                        if (!el1.contains(event.target) && !el2.contains(event.target)) {
+                            this.appState.showSearchResults1 = false;
+                        }
+                    }
+                },
+                closePlacePage: function(event) {
+                    event.stopPropagation();
+                    this.placeOnPlacePage = {};
+                    for (let key in this.backState) {
+                        this.appState[key] = this.backState[key];
+                    }
+                },
+                closeRecommendations: function() {
+                   for (let key in this.backState) {
+                        this.appState[key] = this.backState[key];
+                    }
+                },
+                getRecommendations: function() {
+                    this.appState.showRecommendations = true;
+                    this.appState.recommendationsInProgress = true;
+                    vm.recommendations = [];
+
+                    axios.get('http://127.0.0.1:8000/api/get-recommendations')
+                        .then(function (response) {
+                          if (response.status === 200){
+                              vm.recommendations = response.data;
+                              vm.appState.recommendationsInProgress = false;
+                          }
+                        })
+                        .catch(function (error) {
+                            vm.appState.recommendationsInProgress = false;
+                            console.log(error);
+                        });
+                }
+            },
+            watch: {
+                searchQuery: function () {
+                     if (vm.searchQuery){
+                         vm.lastSearchIteration++;
+                         let thisIteration = vm.lastSearchIteration;
+                         axios.get('http://127.0.0.1:8000/api/search-places?query='+vm.searchQuery)
+                              .then(function (response) {
+                                  if (response.status === 200 && thisIteration === vm.lastSearchIteration){
+                                      vm.searchResults =  response.data;
+                                  }
+                              })
+                              .catch(function (error) {
+                                  console.log(error);
+                              });
+                     }
+                     else if (vm.searchQuery === ''){
+                         vm.searchResults = [];
+                     }
+                },
+            },
+            computed: {
+                favouritesPk: function () {
+                    let pks = [];
+                    this.favourites.forEach(function (place) {
+                        pks.push(place.pk);
+                    });
+                    return pks;
+                },
+                showSearchResults: function () {
+                    return this.searchResults.length !== 0 && (this.appState.showSearchResults1 || this.appState.showSearchResults2);
+                },
+            },
+        });
+        const vm = app.mount('#app');
+    </script>
+</body>
+</html>
