@@ -7,11 +7,20 @@ import numpy as np
 
 from main.serializers import serialize_places
 
+import csv
 
+model = np.zeros((16864, 16864), dtype=np.short)
+
+with open("model.csv", "r") as f:
+    reader = csv.reader(f, delimiter=",")
+    for i, line in enumerate(reader):
+        if i > 0:
+            model[i-1] = np.array(line, dtype=np.short)
+print(model.shape)
 
 def get_recommendations(favourites):
-    model = np.array(pd.read_csv('model.csv', index_col=False, sep=','))  ## НАДО ВЫНЕСТИ ИЗ МЕТОДА
-    print(model.shape)
+    # model = np.array(pd.read_csv('model.csv', index_col=False, sep=','))  ## НАДО ВЫНЕСТИ ИЗ МЕТОДА
+    # print(model.shape)
 
     scores = model[favourites[0] - 1]
     for i in range(1, len(favourites)):
