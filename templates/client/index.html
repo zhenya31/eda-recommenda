@@ -394,7 +394,7 @@
             };
             },
             beforeMount() {
-                axios.get('http://127.0.0.1:8000/api/get-favourites')
+                axios.get('/api/get-favourites')
                   .then(function (response) {
                       if (response.status === 200){
                           vm.favourites = response.data.reverse();
@@ -415,7 +415,7 @@
 
                     vm.placePageBranches = [];
 
-                    axios.get('http://127.0.0.1:8000/api/get-branches?pk=' + place.pk)
+                    axios.get('/api/get-branches?pk=' + place.pk)
                           .then(function (response) {
                               if (response.status === 200){
                                   vm.placePageBranches = response.data;
@@ -440,7 +440,7 @@
                 },
                 deleteFromFavourites(pk) {
                      let idx = vm.favouritesPk.indexOf(pk)
-                     axios.get('http://127.0.0.1:8000/api/delete-from-favourites?pk=' + pk)
+                     axios.get('/api/delete-from-favourites?pk=' + pk)
                           .then(function (response) {
                               if (response.status === 200 && response.data.status === 'ok'){
                                   vm.favourites.splice(idx, 1);
@@ -451,7 +451,7 @@
                           });
                 },
                 addToFavourites(pk) {
-                     axios.get('http://127.0.0.1:8000/api/add-to-favourites?pk='+pk)
+                     axios.get('/api/add-to-favourites?pk='+pk)
                           .then(function (response) {
                               if (response.status === 200 && response.data.status !== 'error'){
                                   vm.favourites.unshift(response.data);
@@ -488,7 +488,7 @@
                     this.appState.recommendationsInProgress = true;
                     vm.recommendations = [];
 
-                    axios.get('http://127.0.0.1:8000/api/get-recommendations')
+                    axios.get('/api/get-recommendations')
                         .then(function (response) {
                           if (response.status === 200){
                               vm.recommendations = response.data;
@@ -506,7 +506,7 @@
                      if (vm.searchQuery){
                          vm.lastSearchIteration++;
                          let thisIteration = vm.lastSearchIteration;
-                         axios.get('http://127.0.0.1:8000/api/search-places?query='+vm.searchQuery)
+                         axios.get('/api/search-places?query='+vm.searchQuery)
                               .then(function (response) {
                                   if (response.status === 200 && thisIteration === vm.lastSearchIteration){
                                       vm.searchResults =  response.data;
