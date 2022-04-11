@@ -9,7 +9,7 @@ services:
       - SQLITE3_DB=db.sqlite3
   web:
     build: .
-    command: python3.9 manage.py runserver 0.0.0.0:80
+    command: python3.9 manage.py runserver 5.188.77.107:80
     volumes:
       - .:/code
     ports:
