@@ -44,7 +44,7 @@ def delete_from_favourites(request):
 
 @api_view(['GET'])
 def get_favourites(request):
-    favourites_pks = request.session['favourites']
+    favourites_pks = request.session.get('favourites', [])
 
     preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(favourites_pks)])
 
@@ -56,7 +56,7 @@ def get_favourites(request):
 
 @api_view(['GET'])
 def get_recommendations(request):
-    favourites = request.session['favourites']
+    favourites = request.session.get('favourites', [])
 
     recommendations = recommendation_model.get_recommendations(favourites)
 
