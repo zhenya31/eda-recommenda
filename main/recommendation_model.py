@@ -7,7 +7,7 @@ import numpy as np
 
 from main.serializers import serialize_places
 
-model = np.array(pd.read_csv('model.csv'))  ## НАДО ВЫНЕСТИ ИЗ МЕТОДА
+model = np.array(pd.read_csv('model.csv', index_col=False, sep=','))  ## НАДО ВЫНЕСТИ ИЗ МЕТОДА
 print(model.shape)
 
 
