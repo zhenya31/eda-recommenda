@@ -530,7 +530,7 @@
                     return pks;
                 },
                 showSearchResults: function () {
-                    return this.searchResults.length > 0 && (this.appState.showSearchResults1 || this.appState.showSearchResults2);
+                    return this.searchQuery && this.searchResults.length !== 0 && (this.appState.showSearchResults1 || this.appState.showSearchResults2);
                 },
             },
         });
