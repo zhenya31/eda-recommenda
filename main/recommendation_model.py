@@ -18,6 +18,7 @@ with open("model.csv", "r") as f:
             model[i-1] = np.array(line, dtype=np.short)
 print(model.shape)
 
+
 def get_recommendations(favourites):
     # model = np.array(pd.read_csv('model.csv', index_col=False, sep=','))  ## НАДО ВЫНЕСТИ ИЗ МЕТОДА
     # print(model.shape)
@@ -29,7 +30,8 @@ def get_recommendations(favourites):
     n = 20
 
     chains = set(Place.objects.filter(pk__in=favourites).values_list('chain_id', flat=True))
-    chains.remove(0)  # убираем из списка значение chain_id = 0
+    if 0 in chains:
+        chains.remove(0)  # убираем из списка значение chain_id = 0
     branches = Place.objects.filter(chain_id__in=chains).values_list('id', flat=True)
 
     scores[np.array(favourites) - 1] = 0  # зануляем похожесь для входных ресторанов
