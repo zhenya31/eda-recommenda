@@ -348,11 +348,11 @@
                         <div class="mb-1">
                             <div class="mb-1" v-if="placeOnPlacePage.sites.length > 1">Сайты:</div>
                             <div class="mb-1 overflow-hidden" v-for="site in placeOnPlacePage.sites">
-                                <a :href="site.url" target="_top">[[ site.anchor ]]</a>
+                                <a :href="site.url" target="_blank">[[ site.anchor ]]</a>
                             </div>
                         </div>
                         <div class="mb-1"  v-if="placeOnPlacePage.fields.phone_numbers">[[ placeOnPlacePage.fields.phone_numbers ]]</div>
-                        <div class="mb-1" v-if="placeOnPlacePage.fields.vk">VK: <a class="overflow-hidden" :href="placeOnPlacePage.fields.vk" target="_top">[[ placeOnPlacePage.fields.vk ]]</a></div>
+                        <div class="mb-1" v-if="placeOnPlacePage.fields.vk">VK: <a class="overflow-hidden" :href="placeOnPlacePage.fields.vk" target="_blank">[[ placeOnPlacePage.fields.vk ]]</a></div>
                     </div>
                         <h4 style="padding-left: 5%; margin-top: 30px" v-if="placePageBranches.length > 0">Филиалы</h4>
                         <div class="my-card place-card d-flex" style="justify-content: space-between; align-items: center;"
