@@ -58,6 +58,8 @@ def get_favourites(request):
 def get_recommendations(request):
     favourites = request.session.get('favourites', [])
 
+    if len(favourites) > 15 or len(favourites) == 0:
+        return JsonResponse({'status': 'error'}, safe=False)
     recommendations = recommendation_model.get_recommendations(favourites)
 
     # request.session.session_key
